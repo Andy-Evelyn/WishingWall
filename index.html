@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>许愿墙</title>
+    <link rel="stylesheet"  type="text/css" href="style.css">
+</head>
+<body onload = "getlocalData();">
+
+	<ul id="main"></ul>
+    <button id="add" onclick = "add()" class="wish"><i class="icon icon-pencil"></i>&nbsp;&nbsp;我要许愿</button>
+    <div class="w1" id="light">
+        <a href="#" onclick = "cancel()"><i class="icon icon-cross"></i></a>
+        <div class="w1-title">许下你的愿望</div>
+        <p>您是第<input type="text" readonly="true" id="txtStuID" size="1">个要许下心愿的人</p>
+        <textarea id="txt" placeholder="请许下你的心愿：" maxlength="80" autofocus required></textarea>
+        <p class="wcolor">许愿贴背景色:</p>
+        <ul id="color">
+            <li id="c1"></li>
+            <li id="c2"></li>
+            <li id="c3"></li>
+            <li id="c4"></li>
+        </ul>
+        <input type="hidden" id="mycolor" value="#fc9">
+        <button class="addbtn" onclick = "btnAdd_Click();">确&nbsp;认</button>  
+    </div>
+    <div class="w2" id="fade"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
