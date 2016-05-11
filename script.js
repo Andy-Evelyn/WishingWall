@@ -1,4 +1,4 @@
-	var a,Left,Top;
+    var a,Left,Top;
     var index = 1;
     function g(id) {
         return id.substring(0,1) == "." ? document.getElementsByClassName(id.substring(1)) : document.getElementById(id);
@@ -12,20 +12,22 @@
         offsetX = e.clientX;
         offsetY = e.clientY;
         a.style.zIndex = index++;
-    }
 
+    }
     document.onmouseup = function() {
         if (!a) return;
-        document.all ? a.releaseCapture() : window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP); /*释放鼠标捕获*/
+        document.all ? a.releaseCapture() : window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP); /*释放鼠标捕获*/    
         a = "";
     };
     document.onmousemove = function(e) {
         if (!a) return;
         e = e || event;
         a.style.left = (e.clientX - offsetX + initX) + "px";
-        a.style.top = (e.clientY - offsetY + initY) + "px";   
+        a.style.top = (e.clientY - offsetY + initY) + "px";  
+        // localStorage.setItem("keyLeft",a.style.left);
+        // localStorage.setItem("keyTop",a.style.top);
     };
-
+    
      function add(){
         g("light").style.display = "block";
         g("fade").style.display = "block";
@@ -123,8 +125,7 @@
             setData.Color = strColor;
             setData.Time = strTime.toLocaleDateString(); 
             var strTxtData = JSON.stringify(setData);
-            localStorage.setItem(strStuID,strTxtData);
-            
+            localStorage.setItem(strStuID,strTxtData);      
         }
         //重新加载
         getlocalData();     
@@ -137,61 +138,35 @@
      var n = 1;
      function getlocalData(){
         var strHTML = "";
-        Left = 80;
-        Top = 100;
+        Left = 100;
+        Top = 140;
         for(var i = 0;i < localStorage.length;i++){
-            /*返回第i个变量的键值（key）并保存在strKey中*/
             var strKey = localStorage.key(i);
-            // Left += 180;
-            // Top = RetRndNum() + 60;
-            Left += 190;
-            Top += 35;
-            if(Left > 1020){
-                Left = 60;
-            }
-            if(Top > 600){
-                Top = 200;
-            }
+            if(!isNaN(strKey)){
             var GetData = JSON.parse(localStorage.getItem(strKey));
-
+            Left += 181;
             strHTML += "<li style='left:";
             strHTML += Left;
             strHTML += "px; top:";
             strHTML += Top;
-            strHTML += "px; background:"
+            strHTML += "px; background:";
             strHTML += GetData.Color;
             strHTML += "' onmousedown = 'move(this,event)'>" ;
             strHTML += "<div class='sradius'></div>";
-            // strHTML += "<a class='icon icon-cancel-circle' href='#' onclick = DeleteData('";
-            // strHTML += GetData.StuID;
-            // strHTML += "')></a>";
-            strHTML += "<a class='icon icon-cancel-circle' href='#' onclick = DeleteData()>"+"</a>";
+            strHTML += "<a class='icon icon-cancel-circle' href='#' onclick = DeleteData('";
+            strHTML += GetData.StuID;
+            strHTML += "')></a>";
             strHTML += "<p class='snum'>"+GetData.StuID+"</p>";
             strHTML += "<p class='wcolor'>"+GetData.Textarea+"</p>";
             strHTML +="<span class='wtime'>"+ GetData.Time + "</span>";
             strHTML +="</li>";
+            }
         }
         g("main").innerHTML = strHTML;
         g("txtStuID").value = n + localStorage.length;
      }
-     // function DeleteData(k){
-     //    //删除指定键名对应的数据
-     //    localStorage.removeItem(k);
-     //    getlocalData();
-     // }
-
-     function DeleteData(){
-        alert("您没有该操作权哟！");
+     function DeleteData(k){
+        //删除指定键名对应的数据
+        localStorage.removeItem(k);
+        getlocalData();
      }
-
-     function RetRndNum(){
-        var strRnd;
-        strRnd = Math.round(Math.random() * 81 + 50);
-        return strRnd;
-    }
-
-
-
-
-
-
