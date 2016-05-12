@@ -1,5 +1,7 @@
     var a,Left,Top;
     var index = 1;
+    var Width = document.body.clientWidth || document.documentElement.clientWidth;
+    var Height = document.body.clientHeight || document.documentElement.clientHeight;
     function g(id) {
         return id.substring(0,1) == "." ? document.getElementsByClassName(id.substring(1)) : document.getElementById(id);
     }
@@ -24,8 +26,6 @@
         e = e || event;
         a.style.left = (e.clientX - offsetX + initX) + "px";
         a.style.top = (e.clientY - offsetY + initY) + "px";  
-        // localStorage.setItem("keyLeft",a.style.left);
-        // localStorage.setItem("keyTop",a.style.top);
     };
     
      function add(){
@@ -125,7 +125,7 @@
             setData.Color = strColor;
             setData.Time = strTime.toLocaleDateString(); 
             var strTxtData = JSON.stringify(setData);
-            localStorage.setItem(strStuID,strTxtData);      
+            localStorage.setItem(strStuID,strTxtData);     
         }
         //重新加载
         getlocalData();     
@@ -135,7 +135,6 @@
         cancel();
      }
      //获取保存数据并显示在页面中
-     var n = 1;
      function getlocalData(){
         var strHTML = "";
         Left = 100;
@@ -145,6 +144,10 @@
             if(!isNaN(strKey)){
             var GetData = JSON.parse(localStorage.getItem(strKey));
             Left += 181;
+            if(Left > (Width-350)){
+                Left = 100;
+                Top += 80;
+            }
             strHTML += "<li style='left:";
             strHTML += Left;
             strHTML += "px; top:";
@@ -160,13 +163,18 @@
             strHTML += "<p class='wcolor'>"+GetData.Textarea+"</p>";
             strHTML +="<span class='wtime'>"+ GetData.Time + "</span>";
             strHTML +="</li>";
-            }
+            } 
         }
         g("main").innerHTML = strHTML;
-        g("txtStuID").value = n + localStorage.length;
+        var ID = 1;
+        if(localStorage.length != 0){
+            ID = parseInt(GetData.StuID)+1;
+        } 
+        g("txtStuID").value = ID;
      }
      function DeleteData(k){
         //删除指定键名对应的数据
-        localStorage.removeItem(k);
+        localStorage.removeItem(k); 
         getlocalData();
      }
+     
