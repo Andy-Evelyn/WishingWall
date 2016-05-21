@@ -120,7 +120,7 @@
         if(strTextarea.length > 0){
             //定义一个实体对象，保存全部获取的值
             var setData = new Object;
-            setData.StuID = strStuID ;
+            setData.StuID = strStuID;
             setData.Textarea = strTextarea;
             setData.Color = strColor;
             setData.Time = strTime.toLocaleDateString(); 
@@ -139,6 +139,8 @@
         var strHTML = "";
         Left = 100;
         Top = 140;
+        n = 1;
+        var all = new Array();
         for(var i = 0;i < localStorage.length;i++){
             var strKey = localStorage.key(i);
             if(!isNaN(strKey)){
@@ -159,16 +161,17 @@
             strHTML += "<a class='icon icon-cancel-circle' href='#' onclick = DeleteData('";
             strHTML += GetData.StuID;
             strHTML += "')></a>";
-            strHTML += "<p class='snum'>"+GetData.StuID+"</p>";
+            strHTML += "<p class='snum'>"+parseInt(GetData.StuID)+"</p>";
             strHTML += "<p class='wcolor'>"+GetData.Textarea+"</p>";
             strHTML +="<span class='wtime'>"+ GetData.Time + "</span>";
             strHTML +="</li>";
             } 
+            all.push(GetData.StuID);
         }
         g("main").innerHTML = strHTML;
         var ID = 1;
         if(localStorage.length != 0){
-            ID = parseInt(GetData.StuID)+1;
+            ID =  Math.max.apply(null, all) + 1;
         } 
         g("txtStuID").value = ID;
      }

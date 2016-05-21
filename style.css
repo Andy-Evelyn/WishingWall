@@ -125,6 +125,7 @@ button.wish{
     font-weight: bolder;
     border-radius:10px;
     cursor:pointer;
+    outline:none;
 }
 
 /*填写许愿单样式*/
@@ -172,6 +173,7 @@ textarea{
     margin-top: 10px;
     border-radius:5px;
     resize: none;
+    outline:none;
     border:1px solid #dce1e5;
 }
 .w1>p{
@@ -217,6 +219,7 @@ textarea{
     background:#32927A;
     cursor: pointer;
     border-radius: 18px;
+    outline:none;
     box-shadow: 2px 2px 5px #000;
 }
 .addbtn:hover{
