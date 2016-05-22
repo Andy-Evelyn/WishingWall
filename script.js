@@ -1,44 +1,4 @@
-    var a,Left,Top;
-    var index = 1;
-    var Width = document.body.clientWidth || document.documentElement.clientWidth;
-    var Height = document.body.clientHeight || document.documentElement.clientHeight;
-    function g(id) {
-        return id.substring(0,1) == "." ? document.getElementsByClassName(id.substring(1)) : document.getElementById(id);
-    }
-    function move(o, e) {
-        e = e || event;
-        a = o;
-        document.all ? a.setCapture() : window.captureEvents(Event.MOUSEMOVE);  /*设置鼠标捕获*/
-        initX = parseInt(a.style.left);
-        initY = parseInt(a.style.top);
-        offsetX = e.clientX;
-        offsetY = e.clientY;
-        a.style.zIndex = index++;
-
-    }
-    document.onmouseup = function() {
-        if (!a) return;
-        document.all ? a.releaseCapture() : window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP); /*释放鼠标捕获*/    
-        a = "";
-    };
-    document.onmousemove = function(e) {
-        if (!a) return;
-        e = e || event;
-        a.style.left = (e.clientX - offsetX + initX) + "px";
-        a.style.top = (e.clientY - offsetY + initY) + "px";  
-    };
-    
-     function add(){
-        g("light").style.display = "block";
-        g("fade").style.display = "block";
-     }
-     function cancel(){
-        g("light").style.display = "none";
-        g("fade").style.display = "none";
-     }
-     
-     /*选中背景色*/
-     var EventUtil = {
+var EventUtil = {
         addHandler:function(element,type,handler){
             if(element.addEventListener){
                 element.addEventListener(type,handler,false);
@@ -46,13 +6,20 @@
                 element.attachEvent("on" + type,handler);
             }else{
                 element["on" + type] = handler;
-            }
+            };
         },
         getEvent: function(event) {
                 return event || window.event;
         },
         getTarget: function(event) {
                 return event.target || event.srcElement;
+        },
+        preventDefault:function(event){
+            if(event.preventDefault){
+                event.preventDefault();
+            }else{
+                event.returnValue = false;
+            };
         },
         removeHandler:function(element,type,handler){
             if(element.removeEventListener){
@@ -61,57 +28,113 @@
                 element.detachEvent("on" + type,handler);
             }else{
                 element["on" + type] = null;
-            }
-        }
-     }
-     var lse = g("color");
-     EventUtil.addHandler(lse,"click",function(event){
-        event = EventUtil.getEvent(event);
-        var target = EventUtil.getTarget(event);
-        switch(target.id){
-            case "c1":
-                siblings("c1");
-            break;
-            case "c2":
-                siblings("c2");
-            break;
-            case "c3":
-                siblings("c3");
-            break;
-            case "c4":
-                siblings("c4");
-            break;
-        }
-     });
+            };
+        },
+        stopPropagation:function(event){
+            if(event.stopPropagation){
+                event.stopPropagation();
+            }else{
+                event.cancelBubble = true;
+            };
+        },
+};
 
-     function siblings(el){ 
-        var p1 = g(el).parentNode.children;
+var WishWall = function(){
+    this.a = null;
+    this.Left = null;
+    this.Top = null;
+    this.index = 1;
+    this.Width = document.body.clientWidth || document.documentElement.clientWidth;
+    this.Height = document.body.clientHeight || document.documentElement.clientHeight;
+    this.init();
+};
+
+WishWall.prototype = {
+    init:function(){
+        this.mouse();
+        this.handler();
+    },
+    g:function(id){
+         return id.substring(0,1) == "." ? document.getElementsByClassName(id.substring(1)) : document.getElementById(id);
+    },
+    add:function(){
+        this.g("light").style.display = "block";
+        this.g("fade").style.display = "block";
+    },
+    cancel:function(){
+        this.g("light").style.display = "none";
+        this.g("fade").style.display = "none";
+    },
+    move:function(o,e){
+        e = e || event;
+        this.a = o;
+        /*设置鼠标捕获*/
+        document.all ? this.a.setCapture() : window.captureEvents(Event.MOUSEMOVE);  
+        initX = parseInt(this.a.style.left);
+        initY = parseInt(this.a.style.top);
+        offsetX = e.clientX;
+        offsetY = e.clientY;
+        this.a.style.zIndex = this.index++;
+    },
+    mouse:function(){
+        var that = this;
+        document.onmouseup = function() {
+        if (!that.a) return;
+        /*释放鼠标捕获*/ 
+        document.all ? that.a.releaseCapture() : window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP);    
+        that.a = "";
+        };
+        document.onmousemove = function(e) {
+        if (!that.a) return;
+        e = e || event;
+        that.a.style.left = (e.clientX - offsetX + initX) + "px";
+        that.a.style.top = (e.clientY - offsetY + initY) + "px";  
+        };
+    },
+    GetCurrentStyle:function(obj, attribute){
+        return obj.currentStyle?obj.currentStyle[attribute]:document.defaultView.getComputedStyle(obj,false)[attribute];
+    },
+    siblings:function(el){
+        var p1 = this.g(el).parentNode.children;
         for(var i = 0; i< p1.length;i++){
-            if(p1[i] != g(el)){
+            if(p1[i] != this.g(el)){
                 p1[i].style.border="none";
             }
         }
-        g(el).style.border="1px solid #369"; 
+        this.g(el).style.border="1px solid #369"; 
         /*将当前的背景色保存在myColor中*/
-        g("mycolor").value = GetCurrentStyle (g(el),"background-color");
-     }
-
-     /*获取css属性*/
-     function GetCurrentStyle (obj, attribute) {      
-     return obj.currentStyle?obj.currentStyle[attribute]:document.defaultView.getComputedStyle(obj,false)[attribute];   
-    }
-
-     function btnAdd_Click(){
-        // 清空所有localStorage对象保存的数据
-        // localStorage.clear();
-        var strStuID = g("txtStuID").value;
-        var strTextarea = g("txt").value;
+        this.g("mycolor").value = this.GetCurrentStyle (this.g(el),"background-color");
+    },
+    handler:function(){
+        var that = this;
+        EventUtil.addHandler(this.g("color"),"click",function(event){
+            event = EventUtil.getEvent(event);
+            var target = EventUtil.getTarget(event);
+            switch(target.id){
+                case "c1":
+                    that.siblings("c1");
+                break;
+                case "c2":
+                    that.siblings("c2");
+                break;
+                case "c3":
+                    that.siblings("c3");
+                break;
+                case "c4":
+                    that.siblings("c4");
+                break;
+            }
+        });
+    },
+    btnAdd_Click:function(){
+        var strStuID = this.g("txtStuID").value;
+        var strTextarea = this.g("txt").value;
         var strColor;
         var strTime = new Date();
-        if(g("mycolor").value == ""){
+        if(this.g("mycolor").value == ""){
             strColor = "#fc9";
         }else{
-             strColor = g("mycolor").value;
+             strColor = this.g("mycolor").value;
         }
         if(strTextarea == "") {
             alert("您还没有许下心愿哟！");
@@ -127,38 +150,36 @@
             var strTxtData = JSON.stringify(setData);
             localStorage.setItem(strStuID,strTxtData);     
         }
-        //重新加载
-        getlocalData();     
+        this.getlocalData();     
         //清空原先内容
-        g("txt").value = "";
-        g("mycolor").value = "";
-        cancel();
-     }
+        this.g("txt").value = "";
+        this.g("mycolor").value = "";
+        this.cancel();
+     },
      //获取保存数据并显示在页面中
-     function getlocalData(){
+     getlocalData:function(){
         var strHTML = "";
-        Left = 100;
-        Top = 140;
-        n = 1;
+        this.Left = 100;
+        this.Top = 140;
         var all = new Array();
         for(var i = 0;i < localStorage.length;i++){
             var strKey = localStorage.key(i);
             if(!isNaN(strKey)){
             var GetData = JSON.parse(localStorage.getItem(strKey));
-            Left += 181;
-            if(Left > (Width-350)){
-                Left = 100;
-                Top += 80;
+            this.Left += 181;
+            if(this.Left > (this.Width-350)){
+                this.Left = 100;
+                this.Top += 80;
             }
             strHTML += "<li style='left:";
-            strHTML += Left;
+            strHTML += this.Left;
             strHTML += "px; top:";
-            strHTML += Top;
+            strHTML += this.Top;
             strHTML += "px; background:";
             strHTML += GetData.Color;
-            strHTML += "' onmousedown = 'move(this,event)'>" ;
+            strHTML += "' onmousedown = 'wishwall.move(this,event)'>" ;
             strHTML += "<div class='sradius'></div>";
-            strHTML += "<a class='icon icon-cancel-circle' href='#' onclick = DeleteData('";
+            strHTML += "<a class='icon icon-cancel-circle' href='#' onclick = wishwall.DeleteData('";
             strHTML += GetData.StuID;
             strHTML += "')></a>";
             strHTML += "<p class='snum'>"+parseInt(GetData.StuID)+"</p>";
@@ -168,16 +189,29 @@
             } 
             all.push(GetData.StuID);
         }
-        g("main").innerHTML = strHTML;
+        this.g("main").innerHTML = strHTML;
         var ID = 1;
         if(localStorage.length != 0){
             ID =  Math.max.apply(null, all) + 1;
         } 
-        g("txtStuID").value = ID;
-     }
-     function DeleteData(k){
+        this.g("txtStuID").value = ID;
+    },
+    DeleteData:function(k){
         //删除指定键名对应的数据
         localStorage.removeItem(k); 
-        getlocalData();
-     }
+        this.getlocalData();
+    },
+};
+
+var wishwall = new WishWall();
+
+
+     
+     
+     
+
+     
+     
+     
+    
      
